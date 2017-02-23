@@ -1,6 +1,8 @@
 'use strict';
 const test = require('tape');
-const post2slack = require('../index.js')({});
+const Post2Slack = require('../index.js');
+
+const post2slack = new Post2Slack({});
 
 test('converts a basic message passed as string ', (t) => {
   const expectedPacket = {
@@ -145,10 +147,10 @@ test('will use a supplied username', (t) => {
       fields: []
     }],
   };
-  const localSlack2Post = require('../index.js')({
+  const localPost2Slack = new Post2Slack({
     username: 'Jared'
   });
-  const packet = JSON.parse(localSlack2Post.makeSlackPayload([], 'a string'));
+  const packet = JSON.parse(localPost2Slack.makeSlackPayload([], 'a string'));
   t.deepEqual(packet, expectedPacket);
   t.end();
 });
@@ -163,13 +165,13 @@ test('will let you specify additional fields in options', (t) => {
       title: 'hi there'
     }],
   };
-  const localSlack2Post = require('../index.js')({
+  const localPost2Slack = new Post2Slack({
     additionalFields: [
       { title: 'hi', value: 'there' },
       { title: 'go', value: 'away' }
     ]
   });
-  const packet = JSON.parse(localSlack2Post.makeSlackPayload([], 'hi there'));
+  const packet = JSON.parse(localPost2Slack.makeSlackPayload([], 'hi there'));
   t.deepEqual(packet.attachments[0], expectedPacket.attachments[0]);
   t.end();
 });
@@ -181,10 +183,10 @@ test('will hide tags when indicated', (t) => {
       fields: []
     }],
   };
-  const localSlack2Post = require('../index.js')({
+  const localPost2Slack = new Post2Slack({
     hideTags: true
   });
-  const packet = JSON.parse(localSlack2Post.makeSlackPayload(['tags', 'more tags'], 'hi there'));
+  const packet = JSON.parse(localPost2Slack.makeSlackPayload(['tags', 'more tags'], 'hi there'));
   t.deepEqual(packet, expectedPacket);
   t.end();
 });
@@ -197,10 +199,10 @@ test('will post to a specific channel', (t) => {
     }],
     channel: 'MTV'
   };
-  const localSlack2Post = require('../index.js')({
+  const localPost2Slack = new Post2Slack({
     channel: 'MTV'
   });
-  const packet = JSON.parse(localSlack2Post.makeSlackPayload([], 'a message'));
+  const packet = JSON.parse(localPost2Slack.makeSlackPayload([], 'a message'));
   t.deepEqual(packet, expectedPacket);
   t.end();
 });
@@ -213,10 +215,10 @@ test('will post with a provided icon URL', (t) => {
     }],
     icon_url: 'http://image.com'
   };
-  const localSlack2Post = require('../index.js')({
+  const localPost2Slack = new Post2Slack({
     iconURL: 'http://image.com'
   });
-  const packet = JSON.parse(localSlack2Post.makeSlackPayload([], 'a string'));
+  const packet = JSON.parse(localPost2Slack.makeSlackPayload([], 'a string'));
   t.deepEqual(packet, expectedPacket);
   t.end();
 });

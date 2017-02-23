@@ -2,7 +2,7 @@
 const tape = require('tape');
 const tapeExtra = require('tape-extras');
 const Hapi = require('hapi');
-
+const Post2Slack = require('../');
 let server;
 const test = tapeExtra(tape, {
   before(done) {
@@ -15,7 +15,7 @@ const test = tapeExtra(tape, {
 });
 
 test('creates a post2slack class instance', (t) => {
-  const post2slack = require('../index.js')({});
+  const post2slack = new Post2Slack({});
   t.equal(typeof post2slack.post, 'function', 'has "post" function');
   t.equal(typeof post2slack.postFormatted, 'function', 'has "postFormatted" function');
   t.end();
@@ -23,7 +23,7 @@ test('creates a post2slack class instance', (t) => {
 
 test('sends a raw message', (t) => {
   // set up a temp server:
-  const post2slack = require('../index.js')({ slackHook: 'http://localhost:8080/test1' });
+  const post2slack = new Post2Slack({ slackHook: 'http://localhost:8080/test1' });
   server.route({
     method: 'POST',
     path: '/test1',
@@ -39,7 +39,7 @@ test('sends a raw message', (t) => {
 });
 
 test('sends a formatted message', (t) => {
-  const post2slack = require('../index.js')({ slackHook: 'http://localhost:8080/test2' });
+  const post2slack = new Post2Slack({ slackHook: 'http://localhost:8080/test2' });
   server.route({
     method: 'POST',
     path: '/test2',
@@ -59,7 +59,7 @@ test('sends a formatted message', (t) => {
 });
 
 test('returns errors', (t) => {
-  const post2slack = require('../index.js')({ slackHook: 'http://localhost:8080/' });
+  const post2slack = new Post2Slack({ slackHook: 'http://localhost:8080/' });
   post2slack.postFormatted(['aTag', 'anotherTag'], { thing: 'is another thing' }, (err, result) => {
     t.notEqual(err, null, 'returns an error');
     t.equal(err.toString(), 'Error: post to http://localhost:8080/ failed: 404 Not Found');

@@ -85,4 +85,4 @@ class Post2Slack {
   }
 }
 
-module.exports = (config) => new Post2Slack(config);
+module.exports = Post2Slack;
