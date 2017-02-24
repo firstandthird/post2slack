@@ -74,6 +74,9 @@ class Post2Slack {
     if (this.config.iconURL) {
       slackPayload.icon_url = this.config.iconURL;
     }
+    if (this.config.iconEmoji) {
+      slackPayload.icon_emoji = this.config.iconEmoji;
+    }
     if (this.config.username) {
       slackPayload.username = this.config.username;
     }
