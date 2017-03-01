@@ -87,6 +87,31 @@ test('"success" tags will have a "good" color', (t) => {
   t.deepEqual(packet, expectedPacket);
   t.end();
 });
+
+test('can take in a tagColors object to over-ride default tags colors', (t) => {
+  const expectedPacket = {
+    attachments: [{
+      color: 'danger',
+      title: 'a string',
+      fallback: 'a string',
+      fields: [{
+        title: 'Tags',
+        value: 'german'
+      }]
+    }],
+  };
+  const post2slackColors = new Post2Slack({
+    tagColors: {
+      french: 'good',
+      english: 'warning',
+      german: 'danger'
+    }
+  });
+  const packet = JSON.parse(post2slackColors.makeSlackPayload(['german'], 'a string'));
+  t.deepEqual(packet, expectedPacket);
+  t.end();
+});
+
 test('lets you post an object with a special "message" field', (t) => {
   const expectedPacket = {
     attachments: [{
