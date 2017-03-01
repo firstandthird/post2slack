@@ -55,14 +55,24 @@ class Post2Slack {
       attachment.fields.push({ title: 'Tags', value: tags.join(', ') });
     }
     // set any colors for special tags:
-    if (tags.indexOf('success') > -1) {
-      attachment.color = 'good';
-    }
-    if (tags.indexOf('warning') > -1) {
-      attachment.color = 'warning';
-    }
-    if (tags.indexOf('error') > -1) {
-      attachment.color = 'danger';
+    // can overload the tag colors:
+    if (this.config.tagColors) {
+      Object.keys(this.config.tagColors).forEach((tagName) => {
+        if (tags.indexOf(tagName) !== -1) {
+          attachment.color = this.config.tagColors[tagName];
+        }
+      });
+    // or just use the default tag colors:
+    } else {
+      if (tags.indexOf('success') > -1) {
+        attachment.color = 'good';
+      }
+      if (tags.indexOf('warning') > -1) {
+        attachment.color = 'warning';
+      }
+      if (tags.indexOf('error') > -1) {
+        attachment.color = 'danger';
+      }
     }
     // set any special channel:
     const slackPayload = {
