@@ -30,7 +30,6 @@ class Post2Slack {
     const attachment = {
       fields: []
     };
-
     if (_.isString(data)) { //if string just pass as title and be done with it
       attachment.title = data;
       attachment.fallback = data;
@@ -45,8 +44,17 @@ class Post2Slack {
         attachment.title_link = data.url;
         delete data.url;
       }
-      attachment.text = `\`\`\` ${JSON.stringify(data, null, '  ')} \`\`\``;
-      attachment.mrkdwn_in = ['text'];
+      if (this.config.json2Fields) {
+        Object.keys(data).forEach((key) => {
+          attachment.fields.push({
+            title: key,
+            value: data[key]
+          });
+        });
+      } else {
+        attachment.text = `\`\`\` ${JSON.stringify(data, null, '  ')} \`\`\``;
+        attachment.mrkdwn_in = ['text'];
+      }
     }
     if (this.config.additionalFields) {
       attachment.fields = attachment.fields.concat(this.config.additionalFields);
