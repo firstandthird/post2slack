@@ -37,6 +37,30 @@ test('lets you post an object as the message', (t) => {
   t.end();
 });
 
+test('option to convert an object to fields', (t) => {
+  const post2slackWithFields = new Post2Slack({
+    json2Fields: true
+  });
+  const expectedPacket = {
+    attachments: [{
+      fields: [{
+        title: 'name',
+        value: 'test'
+      },
+      {
+        title: 'age',
+        value: 25
+      }]
+    }],
+  };
+  const packet = JSON.parse(post2slackWithFields.makeSlackPayload([], {
+    name: 'test',
+    age: 25
+  }));
+  t.deepEqual(packet, expectedPacket);
+  t.end();
+});
+
 test('"error" tag will set the "danger" color option', (t) => {
   const expectedPacket = {
     attachments: [{
