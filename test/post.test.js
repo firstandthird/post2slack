@@ -9,6 +9,7 @@ test('creates a post2slack class instance', async (t) => {
   const post2slack = new Post2Slack({});
   t.equal(typeof post2slack.post, 'function', 'has "post" function');
   t.equal(typeof post2slack.postFormatted, 'function', 'has "postFormatted" function');
+  await server.stop();
   t.end();
 });
 /*
