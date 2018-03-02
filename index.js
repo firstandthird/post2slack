@@ -7,20 +7,13 @@ class Post2Slack {
     this.config = config;
   }
 
-  post (payload, done) {
-    payload = _.isObject(payload) ? JSON.stringify(payload) : payload;
-    Wreck.request('POST', this.config.slackHook, {
+  async post (payloadToSend) {
+    payloadToSend = _.isObject(payloadToSend) ? JSON.stringify(payloadToSend) : payloadToSend;
+    const { payload } = await Wreck.request('POST', this.config.slackHook, {
       headers: { 'Content-type': 'application/json' },
-      payload
-    }, (err, response, responsePayload) => {
-      if (err) {
-        return done(err);
-      }
-      if (response.statusCode !== 200) {
-        return done(new Error(`post to ${this.config.slackHook} failed: ${response.statusCode} ${response.statusMessage}`));
-      }
-      return done(null, responsePayload);
+      payload: payloadToSend
     });
+    return payload;
   }
 
   // used by slackPostMessage to construct a nice payload:
@@ -100,9 +93,10 @@ class Post2Slack {
     }
     return JSON.stringify(slackPayload);
   }
+
   // will format and slackPostRawMessage a server.log style message to slack:
-  postFormatted(tags, message, done) {
-    this.post(this.makeSlackPayload(tags, message), done);
+  postFormatted(tags, message) {
+    return this.post(this.makeSlackPayload(tags, message));
   }
 }
 
