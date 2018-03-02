@@ -1,10 +1,10 @@
 'use strict';
-const test = require('tape');
+const test = require('tap').test;
 const Post2Slack = require('../index.js');
 
 const post2slack = new Post2Slack({});
 
-test('converts a basic message passed as string ', (t) => {
+test('converts a basic message passed as string ', async (t) => {
   const expectedPacket = {
     attachments: [{
       fallback: 'a string',
@@ -15,14 +15,14 @@ test('converts a basic message passed as string ', (t) => {
       }]
     }],
   };
-  const packetString = post2slack.makeSlackPayload(['test'], 'a string');
+  const packetString = await post2slack.makeSlackPayload(['test'], 'a string');
   t.equal(typeof packetString, 'string');
   const packet = JSON.parse(packetString);
   t.deepEqual(packet, expectedPacket);
   t.end();
 });
 
-test('lets you post an object as the message', (t) => {
+test('lets you post an object as the message', async (t) => {
   const expectedPacket = {
     attachments: [{
       text: '``` {\n  "data": "this is an object"\n} ```',
@@ -30,14 +30,14 @@ test('lets you post an object as the message', (t) => {
       fields: []
     }],
   };
-  const packet = JSON.parse(post2slack.makeSlackPayload([], {
+  const packet = JSON.parse(await post2slack.makeSlackPayload([], {
     data: 'this is an object'
   }));
   t.deepEqual(packet, expectedPacket);
   t.end();
 });
 
-test('option to convert an object to fields', (t) => {
+test('option to convert an object to fields', async (t) => {
   const post2slackWithFields = new Post2Slack({
     json2Fields: true
   });
@@ -53,7 +53,7 @@ test('option to convert an object to fields', (t) => {
       }]
     }],
   };
-  const packet = JSON.parse(post2slackWithFields.makeSlackPayload([], {
+  const packet = JSON.parse(await post2slackWithFields.makeSlackPayload([], {
     name: 'test',
     age: 25
   }));
@@ -61,7 +61,7 @@ test('option to convert an object to fields', (t) => {
   t.end();
 });
 
-test('"error" tag will set the "danger" color option', (t) => {
+test('"error" tag will set the "danger" color option', async (t) => {
   const expectedPacket = {
     attachments: [{
       color: 'danger',
@@ -73,12 +73,12 @@ test('"error" tag will set the "danger" color option', (t) => {
       }]
     }],
   };
-  const packet = JSON.parse(post2slack.makeSlackPayload(['error'], 'some text'));
+  const packet = JSON.parse(await post2slack.makeSlackPayload(['error'], 'some text'));
   t.deepEqual(packet, expectedPacket);
   t.end();
 });
 
-test('warning tags will have a yellow swatch', (t) => {
+test('warning tags will have a yellow swatch', async (t) => {
   const expectedPacket = {
     attachments: [{
       color: 'warning',
@@ -90,12 +90,12 @@ test('warning tags will have a yellow swatch', (t) => {
       }]
     }],
   };
-  const packet = JSON.parse(post2slack.makeSlackPayload(['warning'], 'test msg'));
+  const packet = JSON.parse(await post2slack.makeSlackPayload(['warning'], 'test msg'));
   t.deepEqual(packet, expectedPacket);
   t.end();
 });
 
-test('"success" tags will have a "good" color', (t) => {
+test('"success" tags will have a "good" color', async (t) => {
   const expectedPacket = {
     attachments: [{
       color: 'good',
@@ -107,12 +107,12 @@ test('"success" tags will have a "good" color', (t) => {
       }]
     }],
   };
-  const packet = JSON.parse(post2slack.makeSlackPayload(['success'], 'a string'));
+  const packet = JSON.parse(await post2slack.makeSlackPayload(['success'], 'a string'));
   t.deepEqual(packet, expectedPacket);
   t.end();
 });
 
-test('can take in a tagColors object to over-ride default tags colors', (t) => {
+test('can take in a tagColors object to over-ride default tags colors', async (t) => {
   const expectedPacket = {
     attachments: [{
       color: 'danger',
@@ -136,7 +136,7 @@ test('can take in a tagColors object to over-ride default tags colors', (t) => {
   t.end();
 });
 
-test('lets you post an object with a special "message" field', (t) => {
+test('lets you post an object with a special "message" field', async (t) => {
   const expectedPacket = {
     attachments: [{
       title: 'this is the message that was pulled out of the object below',
@@ -146,14 +146,14 @@ test('lets you post an object with a special "message" field', (t) => {
       fields: []
     }],
   };
-  const packet = JSON.parse(post2slack.makeSlackPayload([], {
+  const packet = JSON.parse(await post2slack.makeSlackPayload([], {
     message: 'this is the message that was pulled out of the object below',
     data: 'this is an object and should be formatted'
   }));
   t.deepEqual(packet, expectedPacket);
   t.end();
 });
-test('lets you post an object without a "message" field', (t) => {
+test('lets you post an object without a "message" field', async (t) => {
   const expectedPacket = {
     attachments: [{
       text: '``` {\n  "data": "this is an object and should be formatted"\n} ```',
@@ -161,14 +161,14 @@ test('lets you post an object without a "message" field', (t) => {
       fields: []
     }],
   };
-  const packet = JSON.parse(post2slack.makeSlackPayload([], {
+  const packet = JSON.parse(await post2slack.makeSlackPayload([], {
     data: 'this is an object and should be formatted'
   }));
   t.deepEqual(packet, expectedPacket);
   t.end();
 });
 
-test('lets you set the title_link with a url field', (t) => {
+test('lets you set the title_link with a url field', async (t) => {
   const expectedPacket = {
     attachments: [{
       fields: [],
@@ -179,7 +179,7 @@ test('lets you set the title_link with a url field', (t) => {
       mrkdwn_in: ['text'],
     }],
   };
-  const packet = JSON.parse(post2slack.makeSlackPayload([], {
+  const packet = JSON.parse(await post2slack.makeSlackPayload([], {
     message: 'this is the message that was pulled out of the object below',
     data: 'this is an object and should be formatted',
     url: 'http://example.com'
@@ -187,7 +187,7 @@ test('lets you set the title_link with a url field', (t) => {
   t.deepEqual(packet, expectedPacket);
   t.end();
 });
-test('will use a supplied username', (t) => {
+test('will use a supplied username', async (t) => {
   const expectedPacket = {
     username: 'Jared',
     attachments: [{
@@ -203,7 +203,7 @@ test('will use a supplied username', (t) => {
   t.deepEqual(packet, expectedPacket);
   t.end();
 });
-test('will let you specify additional fields in options', (t) => {
+test('will let you specify additional fields in options', async (t) => {
   const expectedPacket = {
     attachments: [{
       fields: [
@@ -224,7 +224,7 @@ test('will let you specify additional fields in options', (t) => {
   t.deepEqual(packet.attachments[0], expectedPacket.attachments[0]);
   t.end();
 });
-test('will hide tags when indicated', (t) => {
+test('will hide tags when indicated', async (t) => {
   const expectedPacket = {
     attachments: [{
       title: 'hi there',
@@ -239,7 +239,7 @@ test('will hide tags when indicated', (t) => {
   t.deepEqual(packet, expectedPacket);
   t.end();
 });
-test('will post to a specific channel', (t) => {
+test('will post to a specific channel', async (t) => {
   const expectedPacket = {
     attachments: [{
       title: 'a message',
@@ -255,7 +255,7 @@ test('will post to a specific channel', (t) => {
   t.deepEqual(packet, expectedPacket);
   t.end();
 });
-test('will post with a provided icon URL', (t) => {
+test('will post with a provided icon URL', async (t) => {
   const expectedPacket = {
     attachments: [{
       title: 'a string',
