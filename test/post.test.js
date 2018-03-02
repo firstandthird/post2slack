@@ -51,13 +51,9 @@ test('sends a formatted message', async (t) => {
   await server.stop();
   t.end();
 });
-/*
-test('returns errors', (t) => {
+
+test('returns errors', async (t) => {
   const post2slack = new Post2Slack({ slackHook: 'http://localhost:8080/' });
-  post2slack.postFormatted(['aTag', 'anotherTag'], { thing: 'is another thing' }, (err, result) => {
-    t.notEqual(err, null, 'returns an error');
-    t.equal(err.toString(), 'Error: post to http://localhost:8080/ failed: 404 Not Found');
-    server.stop(t.end);
-  });
+  t.throws(await post2slack.postFormatted(['aTag', 'anotherTag'], { thing: 'is another thing' }));
+  t.end();
 });
-*/
