@@ -1,5 +1,5 @@
 'use strict';
-const test = require('tape');
+const test = require('tap').test;
 const Post2Slack = require('../index.js');
 
 const post2slack = new Post2Slack({});
@@ -18,7 +18,7 @@ test('converts a basic message passed as string ', (t) => {
   const packetString = post2slack.makeSlackPayload(['test'], 'a string');
   t.equal(typeof packetString, 'string');
   const packet = JSON.parse(packetString);
-  t.deepEqual(packet, expectedPacket);
+  t.match(packet, expectedPacket);
   t.end();
 });
 
@@ -33,7 +33,7 @@ test('lets you post an object as the message', (t) => {
   const packet = JSON.parse(post2slack.makeSlackPayload([], {
     data: 'this is an object'
   }));
-  t.deepEqual(packet, expectedPacket);
+  t.match(packet, expectedPacket);
   t.end();
 });
 
@@ -57,7 +57,7 @@ test('option to convert an object to fields', (t) => {
     name: 'test',
     age: 25
   }));
-  t.deepEqual(packet, expectedPacket);
+  t.match(packet, expectedPacket);
   t.end();
 });
 
@@ -74,7 +74,7 @@ test('"error" tag will set the "danger" color option', (t) => {
     }],
   };
   const packet = JSON.parse(post2slack.makeSlackPayload(['error'], 'some text'));
-  t.deepEqual(packet, expectedPacket);
+  t.match(packet, expectedPacket);
   t.end();
 });
 
@@ -91,7 +91,7 @@ test('warning tags will have a yellow swatch', (t) => {
     }],
   };
   const packet = JSON.parse(post2slack.makeSlackPayload(['warning'], 'test msg'));
-  t.deepEqual(packet, expectedPacket);
+  t.match(packet, expectedPacket);
   t.end();
 });
 
@@ -108,7 +108,7 @@ test('"success" tags will have a "good" color', (t) => {
     }],
   };
   const packet = JSON.parse(post2slack.makeSlackPayload(['success'], 'a string'));
-  t.deepEqual(packet, expectedPacket);
+  t.match(packet, expectedPacket);
   t.end();
 });
 
@@ -132,7 +132,7 @@ test('can take in a tagColors object to over-ride default tags colors', (t) => {
     }
   });
   const packet = JSON.parse(post2slackColors.makeSlackPayload(['german'], 'a string'));
-  t.deepEqual(packet, expectedPacket);
+  t.match(packet, expectedPacket);
   t.end();
 });
 
@@ -150,7 +150,7 @@ test('lets you post an object with a special "message" field', (t) => {
     message: 'this is the message that was pulled out of the object below',
     data: 'this is an object and should be formatted'
   }));
-  t.deepEqual(packet, expectedPacket);
+  t.match(packet, expectedPacket);
   t.end();
 });
 test('lets you post an object without a "message" field', (t) => {
@@ -164,7 +164,7 @@ test('lets you post an object without a "message" field', (t) => {
   const packet = JSON.parse(post2slack.makeSlackPayload([], {
     data: 'this is an object and should be formatted'
   }));
-  t.deepEqual(packet, expectedPacket);
+  t.match(packet, expectedPacket);
   t.end();
 });
 
@@ -184,7 +184,7 @@ test('lets you set the title_link with a url field', (t) => {
     data: 'this is an object and should be formatted',
     url: 'http://example.com'
   }));
-  t.deepEqual(packet, expectedPacket);
+  t.match(packet, expectedPacket);
   t.end();
 });
 test('will use a supplied username', (t) => {
@@ -200,9 +200,10 @@ test('will use a supplied username', (t) => {
     username: 'Jared'
   });
   const packet = JSON.parse(localPost2Slack.makeSlackPayload([], 'a string'));
-  t.deepEqual(packet, expectedPacket);
+  t.match(packet, expectedPacket);
   t.end();
 });
+
 test('will let you specify additional fields in options', (t) => {
   const expectedPacket = {
     attachments: [{
@@ -221,7 +222,7 @@ test('will let you specify additional fields in options', (t) => {
     ]
   });
   const packet = JSON.parse(localPost2Slack.makeSlackPayload([], 'hi there'));
-  t.deepEqual(packet.attachments[0], expectedPacket.attachments[0]);
+  t.match(packet.attachments[0], expectedPacket.attachments[0]);
   t.end();
 });
 test('will hide tags when indicated', (t) => {
@@ -236,7 +237,7 @@ test('will hide tags when indicated', (t) => {
     hideTags: true
   });
   const packet = JSON.parse(localPost2Slack.makeSlackPayload(['tags', 'more tags'], 'hi there'));
-  t.deepEqual(packet, expectedPacket);
+  t.match(packet, expectedPacket);
   t.end();
 });
 test('will post to a specific channel', (t) => {
@@ -252,7 +253,7 @@ test('will post to a specific channel', (t) => {
     channel: 'MTV'
   });
   const packet = JSON.parse(localPost2Slack.makeSlackPayload([], 'a message'));
-  t.deepEqual(packet, expectedPacket);
+  t.match(packet, expectedPacket);
   t.end();
 });
 test('will post with a provided icon URL', (t) => {
@@ -268,6 +269,6 @@ test('will post with a provided icon URL', (t) => {
     iconURL: 'http://image.com'
   });
   const packet = JSON.parse(localPost2Slack.makeSlackPayload([], 'a string'));
-  t.deepEqual(packet, expectedPacket);
+  t.match(packet, expectedPacket);
   t.end();
 });
