@@ -1,39 +1,36 @@
 'use strict';
-const _ = require('lodash');
-const Wreck = require('wreck');
+const Wreck = require('@hapi/wreck');
+const aug = require('aug');
 
 class Post2Slack {
   constructor (config) {
     this.config = config;
   }
 
-  post (payload, done) {
-    payload = _.isObject(payload) ? JSON.stringify(payload) : payload;
-    Wreck.request('POST', this.config.slackHook, {
+  async post(payloadToSend) {
+    const { res, payload } = await Wreck.post(this.config.slackHook, {
       headers: { 'Content-type': 'application/json' },
-      payload
-    }, (err, response, responsePayload) => {
-      if (err) {
-        return done(err);
-      }
-      if (response.statusCode !== 200) {
-        return done(new Error(`post to ${this.config.slackHook} failed: ${response.statusCode} ${response.statusMessage}`));
-      }
-      return done(null, responsePayload);
+      payload: payloadToSend
     });
+    if (res.statusCode !== 200) {
+      throw new Error(`post to ${this.config.slackHook} failed: ${res.statusCode} ${res.statusMessage}`);
+    }
+    return payload;
   }
 
   // used by slackPostMessage to construct a nice payload:
   makeSlackPayload (tags, data) {
     //clone because we muck with data
-    data = _.cloneDeep(data);
+    if (typeof data === 'object') {
+      data = aug({}, data);
+    }
     const attachment = {
       fields: []
     };
-    if (_.isString(data)) { //if string just pass as title and be done with it
+    if (typeof data === 'string') { //if string just pass as title and be done with it
       attachment.title = data;
       attachment.fallback = data;
-    } else if (_.isObject(data)) { // if object, then lets make it look good
+    } else if (typeof data === 'object') { // if object, then lets make it look good
       //if it has a message, pull that out and display as title
       if (data.message) {
         attachment.title = data.message;
@@ -101,8 +98,8 @@ class Post2Slack {
     return JSON.stringify(slackPayload);
   }
   // will format and slackPostRawMessage a server.log style message to slack:
-  postFormatted(tags, message, done) {
-    this.post(this.makeSlackPayload(tags, message), done);
+  postFormatted(tags, message) {
+    return this.post(this.makeSlackPayload(tags, message));
   }
 }
 
