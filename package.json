@@ -4,7 +4,7 @@
   "description": "send a packet to slack",
   "main": "index.js",
   "scripts": {
-    "test": "npm run lint && tap test/*.test.js --cov",
+    "test": "tap test/*.test.js",
     "lint": "eslint ."
   },
   "repository": {
@@ -19,14 +19,14 @@
   },
   "homepage": "https://github.com/firstandthird/post2slack#readme",
   "dependencies": {
-    "@hapi/wreck": "^15.0.1",
+    "@hapi/wreck": "^17.0.0",
     "aug": "^3.0.1"
   },
   "devDependencies": {
-    "eslint": "^5.16.0",
-    "eslint-config-firstandthird": "^4.3.0",
+    "@hapi/hapi": "^20.0.1",
+    "eslint": "^7.13.0",
+    "eslint-config-firstandthird": "^6.0.2",
     "eslint-plugin-import": "^2.17.3",
-    "hapi": "^18.1.0",
     "tap": "^14.2.2"
   }
 }

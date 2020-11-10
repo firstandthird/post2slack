@@ -1,8 +1,6 @@
-'use strict';
 const tap = require('tap');
-const Hapi = require('hapi');
+const Hapi = require('@hapi/hapi');
 const Post2Slack = require('../');
-// let server;
 
 tap.test('creates a post2slack class instance', (t) => {
   const post2slack = new Post2Slack({});

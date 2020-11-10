@@ -1,4 +1,3 @@
-'use strict';
 const test = require('tap').test;
 const Post2Slack = require('../index.js');
 
